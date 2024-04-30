@@ -7,7 +7,7 @@ export default function LatestNewsPage() {
 
     return (
         <>
-            <h1>Latest New Page</h1>
+            <h1>Latest News:</h1>
             <NewsList newsList={latestNews} />
         </>
     )
