@@ -1,7 +1,7 @@
-import Link from "next/link";
-import { newsList } from "../../../../seed-news";
 import { notFound } from "next/navigation";
 import Image from "next/image";
+import Link from "next/link";
+import { getNewsBySlug } from "@/lib/news-year";
 
 interface Params {
     slug: string;
@@ -12,7 +12,7 @@ interface IndividualNewsPageProps {
 }
 
 export default function IndividualNewsPage({ params } : IndividualNewsPageProps) {
-    const currentNews = newsList.find(news => news.slug === params.slug);
+    const currentNews = getNewsBySlug(params.slug);
 
     if (!currentNews) {
         return notFound();
@@ -22,7 +22,9 @@ export default function IndividualNewsPage({ params } : IndividualNewsPageProps)
         <main className="flex flex-col items-center justify-center p-4">
             <div className="w-full max-w-md mx-auto">
                 <div className="relative h-64 w-full mb-6">
-                    <Image src={`/images/${currentNews.image}`} alt={currentNews.title} fill objectFit="cover" />
+                    <Link href={`/news/${currentNews.slug}/image`}>
+                        <Image src={`/images/${currentNews.image}`} alt={currentNews.title} fill />
+                    </Link>
                 </div>
             </div>
             <div className="text-center">

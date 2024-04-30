@@ -1,6 +1,8 @@
 import Link from "next/link";
+import NavLink from "./NavLink";
 
 export default function MainHeader() {
+
     return (
         <>
             <header className="flex justify-between items-center p-8">
@@ -11,7 +13,10 @@ export default function MainHeader() {
                             <Link href="/">Home</Link>
                         </li>
                         <li>
-                            <Link href="/news">News</Link>
+                            <NavLink href="/news">News</NavLink>
+                        </li>
+                        <li>
+                            <NavLink href="/archive">Archive</NavLink>
                         </li>
                     </ul>
                 </nav>
