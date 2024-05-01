@@ -22,6 +22,18 @@ a:hover {
   color: #4343fa;
 }
 
+.cta-button {
+  padding: 12px 24px;
+  color: #eaeaea;
+  background: #8f8ff9;
+  border-radius: 6px;
+}
+
+.cta-button:hover {
+  color: #eaeaea;
+  background: #4343fa;
+}
+
 @layer utilities {
   .text-balance {
     text-wrap: balance;
