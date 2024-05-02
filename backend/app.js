@@ -49,7 +49,16 @@ app.get("/api/news/year-list", (req, res) => {
   return res.send(years);
 });
 
-app.get("/api/news/year-month-list/:year", (req, res) => {
+app.get("/api/news/year-month-list/:year", async (req, res) => {
+  //Simulating a 2 seconds delay to view loading using suspense in nextjs
+  // const promise = new Promise((resolve) => {
+  //   setTimeout(() => {
+  //     resolve();
+  //   }, 2000);
+  // });
+
+  await promise;
+
   const monthList = db
     .prepare("SELECT DISTINCT strftime('%m', date) as month FROM news WHERE strftime('%Y', date) = ?")
     .all(req.params.year)
@@ -64,7 +73,16 @@ app.get("/api/news/slug/:slug", (req, res) => {
   return res.send(newsList[0]);
 });
 
-app.get("/api/news/:year", (req, res) => {
+app.get("/api/news/:year", async (req, res) => {
+  //Simulating a 4 seconds delay to view loading using suspense in nextjs
+  const promise = new Promise((resolve) => {
+    setTimeout(() => {
+      resolve();
+    }, 4000);
+  });
+
+  await promise;
+
   const newsList = db
     .prepare("SELECT * FROM news WHERE strftime('%Y', date) = ? ORDER BY date DESC")
     .all(req.params.year);
