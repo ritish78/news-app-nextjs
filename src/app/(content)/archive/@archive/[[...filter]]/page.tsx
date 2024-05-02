@@ -1,5 +1,4 @@
 import NewsList from "@/components/NewsList";
-import { getAvailableNewsMonths, getAvailableNewsYears, getNewsForYear, getNewsForYearAndMonth } from "@/lib/news-year";
 import Link from "next/link";
 
 interface Params {
@@ -10,31 +9,35 @@ interface YearNewsProps {
     params: Params;
 }
 
-export default function YearNewsPage({ params }: YearNewsProps) {
+export default async function YearNewsPage({ params }: YearNewsProps) {
     const filter = params.filter;
     const filteredYear = filter?.[0];
     const filteredMonth = filter?.[1];
 
     let newsList;
-    let links = getAvailableNewsYears();
+    const linksResponse = await fetch("http://localhost:5000/api/news/year-list");
+    let links: string[] = await linksResponse.json();
+
 
     if (filteredYear && filteredMonth) {
-        newsList = getNewsForYearAndMonth(filteredYear, filteredMonth);
+        const newsListResponse = await fetch(`http://localhost:5000/api/news/${filteredYear}/${filteredMonth}`);
+        newsList = await newsListResponse.json();
+
+        console.log("NewsList", newsList);
+        
         links = [];
     } else if (filteredYear && !filteredMonth) {
-        newsList = getNewsForYear(filteredYear);
-        links = getAvailableNewsMonths(filteredYear);
+        const newsListResponse = await fetch(`http://localhost:5000/api/news/${filteredYear}`);
+        newsList = await newsListResponse.json();
+
+        const newsMonthListResponse = await fetch(`http://localhost:5000/api/news/year-month-list/${filteredYear}`);
+        links = await newsMonthListResponse.json();
     }
 
     let newsContent = <p>No news found for the selected period!</p>
 
     if (newsList && newsList.length > 0) {
         newsContent = <NewsList newsList={newsList}/>
-    }
-
-    if ((filteredYear && !getAvailableNewsYears().includes(filteredYear)) || 
-        (filteredMonth && !getAvailableNewsMonths(filteredYear).includes(filteredMonth))) {
-            throw new Error("Invalid filter!");
     }
 
     return (

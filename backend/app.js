@@ -30,9 +30,56 @@ function seedDb() {
   }
 }
 
-app.get("/news", (req, res) => {
+app.get("/api/news", (req, res) => {
   const news = db.prepare("SELECT * FROM news").all();
   return res.json(news);
+});
+
+app.get("/api/news/latest", (req, res) => {
+  const news = db.prepare("SELECT * FROM news LIMIT 3").all();
+  return res.json(news);
+});
+
+app.get("/api/news/year-list", (req, res) => {
+  const years = db
+    .prepare("SELECT DISTINCT strftime('%Y', date) as year FROM news")
+    .all()
+    .map((year) => year.year);
+
+  return res.send(years);
+});
+
+app.get("/api/news/year-month-list/:year", (req, res) => {
+  const monthList = db
+    .prepare("SELECT DISTINCT strftime('%m', date) as month FROM news WHERE strftime('%Y', date) = ?")
+    .all(req.params.year)
+    .map((month) => month.month);
+
+  return res.send(monthList);
+});
+
+app.get("/api/news/slug/:slug", (req, res) => {
+  const newsList = db.prepare("SELECT * FROM news WHERE slug = ?").all(req.params.slug);
+
+  return res.send(newsList[0]);
+});
+
+app.get("/api/news/:year", (req, res) => {
+  const newsList = db
+    .prepare("SELECT * FROM news WHERE strftime('%Y', date) = ? ORDER BY date DESC")
+    .all(req.params.year);
+
+  return res.send(newsList);
+});
+
+app.get("/api/news/:year/:month", (req, res) => {
+  const news = db
+    .prepare(
+      "SELECT * FROM news WHERE strftime('%Y', date) = ? AND strftime('%m', date) = ? ORDER BY date DESC"
+    )
+    .all(req.params.year, req.params.month);
+
+  return res.send(news);
 });
 
 seedDb();

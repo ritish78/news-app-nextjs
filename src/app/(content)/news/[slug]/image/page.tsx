@@ -1,4 +1,3 @@
-import { getNewsBySlug } from "@/lib/news-year";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 
@@ -10,10 +9,12 @@ interface ImagePageProps {
     params: Params;
 }
 
-export default function ImagePage({ params }: ImagePageProps) {
+export default async function ImagePage({ params }: ImagePageProps) {
     const newsSlug = params.slug;
 
-    const newsBySlug = getNewsBySlug(newsSlug);
+    const response = await fetch(`http://localhost:5000/api/news/slug/${newsSlug}`);
+
+    const newsBySlug = await response.json();
 
     if (!newsBySlug) {
         return notFound();
